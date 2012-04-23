@@ -1,4 +1,7 @@
 <layers>
     <layer name="collective.linguaanalytics"
            interface="collective.linguaanalytics.interfaces.ILayer" />
+    <layer name="analytics" remove="True"
+        interface="collective.googleanalytics.interfaces.browserlayer.IAnalyticsLayer" />
+
 </layers>
