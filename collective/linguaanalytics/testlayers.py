@@ -6,5 +6,4 @@ class LayersView(BrowserView):
     
     def layers(self):
         layers = utils.registered_layers()
-        import pdb;pdb.set_trace()
         return [layer.__identifier__ for layer in layers]
