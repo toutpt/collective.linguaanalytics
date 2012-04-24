@@ -34,12 +34,4 @@
     permission="cmf.ManagePortal"
     />
 
-  <browser:page
-    name="test-layers"
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    class=".testlayers.LayersView"
-    template="testlayers.pt"
-    permission="cmf.ManagePortal"
-    />
-
 </configure>
