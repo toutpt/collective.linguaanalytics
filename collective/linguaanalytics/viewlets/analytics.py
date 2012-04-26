@@ -24,8 +24,8 @@ class AnalyticsTrackingViewlet(tracking.AnalyticsTrackingViewlet):
         if self._code is None:
             mapping = self.mapping
             url = self.navigation_root_url()
-            self.code = mapping.get(url)
-        return self.code
+            self._code = mapping.get(url)
+        return self._code
 
     def available(self):
         """
@@ -34,21 +34,27 @@ class AnalyticsTrackingViewlet(tracking.AnalyticsTrackingViewlet):
         """
         if not self.settings:
             return False
-
-        return self.settings.activated and self.getTrackingWebProperty()
+        isActivated = self.settings.activated
+        hasCode = bool(self.getTrackingWebProperty())
+        #TODO: add excluded role
+        return isActivated and hasCode
 
     @property
     def settings(self):
         if not self._settings:
-            registry = component.getUtility(IRegistry)
-            self._settings = registry.forInterface(interfaces.ISettingsSchema,
-                                                   check=False)
+            registry = component.queryUtility(IRegistry)
+
+            if registry:
+                s = registry.forInterface(interfaces.ISettingsSchema,
+                                          check=False)
+                self._settings = s
+
         return self._settings
 
     def navigation_root_url(self):
 
         if not self._navigation_root_url:
-            portal_state = component.getMultiAdapter((self.context,
+            portal_state = component.queryMultiAdapter((self.context,
                                                       self.request),
                                                      name="plone_portal_state")
             self._navigation_root_url = portal_state.navigation_root_url()
@@ -60,6 +66,8 @@ class AnalyticsTrackingViewlet(tracking.AnalyticsTrackingViewlet):
         mapping = {}
         url_codes = self.settings.mapping
         for url_code in url_codes:
+            if not url_code:continue
+            if not '|' in url_code:continue
             url, code = url_code.split('|')
             mapping[url] = code
         return mapping
