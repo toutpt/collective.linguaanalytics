@@ -1,43 +1,38 @@
 from collective.linguaanalytics.tests import base, utils
 from collective.linguaanalytics.viewlets import analytics
+from zope.schema.interfaces import WrongContainedType
 
-class TestAnalyticsTrackingViewlet(base.UnitTestCase):
+class IntegrationTestAnalyticsTrackingViewlet(base.IntegrationTestCase):
     """unittest for the viewlet"""
 
     def setUp(self):
-        super(TestAnalyticsTrackingViewlet, self).setUp()
+        super(IntegrationTestAnalyticsTrackingViewlet, self).setUp()
         init = analytics.AnalyticsTrackingViewlet
-        self.viewlet = init(utils.FakeContext(), None, None, None)
+        self.request = self.layer['request']
+        self.viewlet = init(self.portal, self.request, None , None)
 
     def test_init(self):
         init = analytics.AnalyticsTrackingViewlet
-        viewlet = init(utils.FakeContext(), None, None, None)
+        viewlet = init(self.portal, self.request, None, None)
         self.assertTrue(hasattr(viewlet, '_settings'))
         self.assertTrue(hasattr(viewlet, '_code'))
         self.assertTrue(hasattr(viewlet, '_navigation_root_url'))
 
     def test_available(self):
-        #no settings
+        #no mapping
         self.assertTrue(not self.viewlet.available())
-        
-        #add working settings
-        self.viewlet._settings = utils.FakeSettings()
-        self.viewlet._navigation_root_url = 'http://nohost/plone'
+
+        #add working mapping
+        self.viewlet.settings.mapping = ['http://nohost/plone|UA-xxxxxx-x']
         self.assertTrue(self.viewlet.available())
 
         #unactivate
-        self.viewlet._settings.activated = False
+        self.viewlet.settings.activated = False
         self.assertTrue(not self.viewlet.available())
-        self.viewlet._settings.activated = True
-
-        #remove mapping
-        self.viewlet._settings.mapping = []
-        self.viewlet._code = None
-        self.assertTrue(not self.viewlet.available())
+        self.viewlet.settings.activated = True
 
     def test_getTrackingWebProperty(self):
-        self.viewlet._settings = utils.FakeSettings()
-        self.viewlet._navigation_root_url = 'http://nohost/plone'
+        self.viewlet.settings.mapping = ['http://nohost/plone|UA-xxxxxx-x']
         code = self.viewlet.getTrackingWebProperty()
         self.assertTrue(code =="UA-xxxxxx-x")
 
@@ -52,14 +47,12 @@ class TestAnalyticsTrackingViewlet(base.UnitTestCase):
         self.assertTrue(code is None)
 
     def test_mapping(self):
-        self.viewlet._settings = utils.FakeSettings()
-        self.viewlet._settings.mapping = ['http://nohost|UA-xxxxxx-x',
-                                          'http://nohost.fr|UA-yyyyyy-y',
-                                          'BAD',
-                                          None]
+        self.viewlet.settings.mapping = ['http://nohost|UA-xxxxxx-x',
+                                         'http://nohost.fr|UA-yyyyyy-y']
+        self.assertRaises(WrongContainedType, self.viewlet.settings.__setattr__, 'mapping', [None])
+        self.assertRaises(WrongContainedType, self.viewlet.settings.__setattr__, 'mapping', ['BAD'])
         mapping = self.viewlet.mapping
         self.assertTrue(mapping.get('http://nohost')=='UA-xxxxxx-x')
         self.assertTrue(mapping.get('http://nohost.fr')=='UA-yyyyyy-y')
         self.assertTrue(len(mapping)==2)
 
-        
