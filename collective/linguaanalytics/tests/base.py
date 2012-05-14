@@ -1,13 +1,14 @@
 import transaction
 import unittest2 as unittest
-from zope import interface
-from plone.app import testing
+from plone.app import testing  # @UnresolvedImport
 from collective.linguaanalytics import testing as layer
+
 
 class UnitTestCase(unittest.TestCase):
 
     def setUp(self):
         pass
+
 
 class IntegrationTestCase(unittest.TestCase):
 
@@ -20,6 +21,7 @@ class IntegrationTestCase(unittest.TestCase):
         self.portal.invokeFactory('Folder', 'test-folder')
         testing.setRoles(self.portal, testing.TEST_USER_ID, ['Member'])
         self.folder = self.portal['test-folder']
+
 
 class FunctionalTestCase(IntegrationTestCase):
 

@@ -1,16 +1,16 @@
 from zope import component
 
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.registry.interfaces import IRegistry
 
 from collective.googleanalytics.viewlets import tracking
 from collective.linguaanalytics import interfaces
 
+
 class AnalyticsTrackingViewlet(tracking.AnalyticsTrackingViewlet):
     """Override this one"""
 
     def __init__(self, context, request, view, manager):
-        super(AnalyticsTrackingViewlet, self).__init__(context,request,view,
+        super(AnalyticsTrackingViewlet, self).__init__(context, request, view,
                                                        manager)
         self._settings = None
         self._code = None
@@ -66,8 +66,10 @@ class AnalyticsTrackingViewlet(tracking.AnalyticsTrackingViewlet):
         mapping = {}
         url_codes = self.settings.mapping
         for url_code in url_codes:
-            if not url_code:continue
-            if not '|' in url_code:continue
+            if not url_code:
+                continue
+            if not '|' in url_code:
+                continue
             url, code = url_code.split('|')
             mapping[url] = code
         return mapping

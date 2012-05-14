@@ -1,6 +1,7 @@
 from collective.linguaanalytics.tests import base, utils
 from collective.linguaanalytics.viewlets import analytics
 
+
 class UnitTestAnalyticsTrackingViewlet(base.UnitTestCase):
     """unittest for the viewlet"""
 
@@ -19,7 +20,7 @@ class UnitTestAnalyticsTrackingViewlet(base.UnitTestCase):
     def test_available(self):
         #no settings
         self.assertTrue(not self.viewlet.available())
-        
+
         #add working settings
         self.viewlet._settings = utils.FakeSettings()
         self.viewlet._navigation_root_url = 'http://nohost/plone'
@@ -39,11 +40,11 @@ class UnitTestAnalyticsTrackingViewlet(base.UnitTestCase):
         self.viewlet._settings = utils.FakeSettings()
         self.viewlet._navigation_root_url = 'http://nohost/plone'
         code = self.viewlet.getTrackingWebProperty()
-        self.assertTrue(code =="UA-xxxxxx-x")
+        self.assertTrue(code == "UA-xxxxxx-x")
 
         self.viewlet._code = "Foo"
         code = self.viewlet.getTrackingWebProperty()
-        self.assertTrue(code =="Foo")
+        self.assertTrue(code == "Foo")
         self.viewlet._code = None
 
         #test bad url
@@ -58,8 +59,6 @@ class UnitTestAnalyticsTrackingViewlet(base.UnitTestCase):
                                           'BAD',
                                           None]
         mapping = self.viewlet.mapping
-        self.assertTrue(mapping.get('http://nohost')=='UA-xxxxxx-x')
-        self.assertTrue(mapping.get('http://nohost.fr')=='UA-yyyyyy-y')
-        self.assertTrue(len(mapping)==2)
-
-        
+        self.assertTrue(mapping.get('http://nohost') == 'UA-xxxxxx-x')
+        self.assertTrue(mapping.get('http://nohost.fr') == 'UA-yyyyyy-y')
+        self.assertTrue(len(mapping) == 2)
