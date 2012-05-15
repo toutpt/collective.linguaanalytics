@@ -1,6 +1,6 @@
 import transaction
 import unittest2 as unittest
-from plone.app import testing  # @UnresolvedImport
+from plone.app import testing
 from collective.linguaanalytics import testing as layer
 
 
